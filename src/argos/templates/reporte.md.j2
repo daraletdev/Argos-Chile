@@ -1,0 +1,81 @@
+# Reporte Forense — Fraccionamiento en Compras Públicas Chile 2025
+**Argos · {{ fecha }}**
+
+> Los hallazgos son indicios estadísticos basados en patrones objetivos de datos públicos.
+> No constituyen prueba de fraude ni determinación legal.
+> Cada caso requiere verificación documental independiente.
+
+**Fundamento legal:**
+- DS 250 art. 13 · DS 661 art. 16 (diciembre 2024)
+- Dictamen CGR, Municipalidad de La Cisterna
+- Navarrete Millón, M. (2024). *Fragmentación en compras públicas*. ISBN 978-956-405-179-6
+- Sanciones aplicables: 10 a 100 UTM + responsabilidad administrativa del funcionario
+
+---
+
+## Resumen
+
+| | |
+|---|---|
+| Umbral de análisis | 1.000 UTM = $66 M CLP |
+| Total casos | {{ total }} |
+| CRÍTICO | {{ n_critico }} |
+| ALTO | {{ n_alto }} |
+| MEDIO | {{ n_medio }} |
+| BAJO | {{ n_bajo }} |
+| Monto total expuesto | ${{ monto_total }} B CLP |
+| Multiplicador promedio | {{ mult_promedio }}x el umbral |
+
+---
+
+{% for nivel, casos, descripcion in secciones %}
+## {{ nivel }}
+
+{{ descripcion }}
+
+{% for c in casos %}
+### {{ loop.index }}. {{ c.organismo }}
+
+| | |
+|---|---|
+| Proveedor | `{{ c.proveedor }}` |
+| Mes | {{ c.mes_nombre }} 2025 |
+| Órdenes | **{{ c.n_ordenes }}** |
+| Total acumulado | **${{ c.total_mes }} M CLP** |
+| Total anual (par) | ${{ c.total_anual }} B CLP |
+| Multiplicador | **{{ c.multiplicador }}x** el umbral de licitación |
+| Rango por orden | ${{ c.monto_min }} M – ${{ c.monto_max }} M |
+| Monto unitario / límite AG | {{ c.pct_limite }}% |
+| % monto idéntico | {{ c.pct_monto }}% |
+| % descripción idéntica | {{ c.pct_desc }}% |
+| Cotización base | `{{ c.cotizacion_base }}` ({{ c.n_cotizaciones }} {{ 'cotización' if c.n_cotizaciones == 1 else 'cotizaciones' }}) |
+| Meses con fraccionamiento | {{ c.n_meses }} ({{ c.meses_lista }}) |
+| Puntaje E / C / S | {{ c.score_e }} / {{ c.score_c }} / {{ c.score_s }} |
+| Nivel | **{{ c.nivel }}** |
+
+**Descripción:** _{{ c.descripcion }}_
+
+> {{ c.argumento }}
+
+---
+
+{% endfor %}
+{% endfor %}
+
+## Metodología
+
+**Fuente:** Mercado Público Chile — órdenes de compra 2025
+**Base de datos:** Neo4j Property Graph (1.7M nodos)
+**Criterio de inclusión:** Par organismo–proveedor con total mensual ≥ 1.000 UTM vía Compra Ágil
+
+**Sistema de puntuación (1–3 por dimensión):**
+- Evidencia forense: % monto idéntico, % descripción idéntica, cotización base única
+- Cronicidad: número de meses del año con fraccionamiento detectado
+- Escala: multiplicador sobre el umbral de licitación obligatoria
+
+Nivel final: CRÍTICO ≥7 pts · ALTO ≥6 · MEDIO ≥4 · BAJO <4
+
+**Limitaciones:**
+- `NombreEspecifico` puede estar truncado en la fuente original
+- No se evalúa si el bien era técnicamente indivisible por su naturaleza
+- La clasificación no considera urgencias operacionales declaradas

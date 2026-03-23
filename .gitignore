@@ -1,0 +1,42 @@
+# Neo4j Database
+data/
+*.neostore
+*.neostore.*
+neo4j/
+
+# Env Variables
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.egg-info/
+*.egg
+.pytest_cache/
+build/
+dist/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+# Notebook backup/duplicates
+notebooks/*\ (*).ipynb
+
+# Generated output files (reproducible via pipeline)
+docs/fraccionamiento_blindado.csv
+docs/fraccionamiento_completo.csv
+docs/reporte_fraccionamiento.md
+docs/reporte_fraccionamiento_final.md
+
+# IDE / tooling
+.pyre_configuration
+.vscode/
+**/.DS_Store

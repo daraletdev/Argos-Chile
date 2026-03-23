@@ -1,0 +1,29 @@
+services:
+  neo4j:
+    image: neo4j:5.15.0-community
+    container_name: argos-db
+    ports:
+      - "7474:7474" 
+      - "7687:7687"
+    environment:
+      - NEO4J_AUTH=neo4j/${NEO4J_ROOT_PASSWORD}
+      - NEO4J_PLUGINS=["graph-data-science", "apoc"]
+      - NEO4J_dbms_security_procedures_unrestricted=gds.*,apoc.*
+      - NEO4J_dbms_security_procedures_allowlist=gds.*,apoc.*
+      - NEO4J_server_memory_heap_initial__size=1G
+      - NEO4J_server_memory_heap_max__size=2500M 
+      - NEO4J_server_memory_pagecache_size=1500M
+    volumes:
+      - ./data/neo4j:/data
+      # Connect Silver Layer direct to Neo4j ingestion engine
+      - ./data/processed:/var/lib/neo4j/import/processed
+      - ./data/logs:/logs
+
+  app:
+    build: .
+    container_name: argos-app
+    depends_on:
+      - neo4j
+    env_file: .env
+    ports:
+      - "8501:8501"
