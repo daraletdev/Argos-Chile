@@ -1,145 +1,147 @@
-# Argos — Detección de Fraccionamiento Ilegal en Compras Públicas
+[🇨🇱 Versión en español](README_ES.md)
 
-**Análisis forense de 1.7 millones de transacciones del Estado chileno · 2025**
+# Argos — Forensic Detection of Illegal Procurement Fragmentation in Chilean Public Spending
 
-> ChileCompra reconoce que "el monitoreo automatizado de la fragmentación es una necesidad no resuelta del sistema" (Navarrete, 2024). Este proyecto lo construye.
+**Forensic analysis of 1.7 million Chilean state transactions · 2025**
 
----
-
-## ¿Qué es el fraccionamiento y por qué importa?
-
-Cuando el Estado necesita comprar algo, la ley establece que **si el monto supera 1.000 UTM (~$66M CLP), debe licitar públicamente** — varios proveedores compiten y el Estado elige la mejor oferta. Esto protege el dinero de todos.
-
-La **Compra Ágil** es un mecanismo de excepción: permite compras rápidas sin licitación, pero solo si la orden individual no supera 100 UTM (~$6.6M CLP).
-
-El **fraccionamiento** ocurre cuando un organismo divide deliberadamente una compra grande en muchas órdenes pequeñas para mantenerse bajo el umbral y evitar la licitación. Es **ilegal** conforme al DS 250 art. 13 y DS 661 art. 16, y puede resultar en multas de 10 a 100 UTM además de responsabilidad administrativa.
-
-```
-Licitación pública (lo que debería ocurrir)       Fraccionamiento (lo que detectamos)
-─────────────────────────────────────────         ──────────────────────────────────────
-  Compra de $702M en ferretería                     Orden 001: $4.87M  ← bajo el límite
-         ↓                                          Orden 002: $4.87M  ← bajo el límite
-  Llamado público a propuestas                      Orden 003: $4.87M  ← bajo el límite
-         ↓                                          ...
-  Varios proveedores compiten                        Orden 144: $4.87M  ← bajo el límite
-         ↓                                                      ↓
-  Se elige la mejor oferta                          Total: $702M → debía licitarse
-```
+> ChileCompra recognizes that "automated monitoring of fragmentation is an unresolved need of the system" (Navarrete, 2024). This project builds it.
 
 ---
 
-## Hallazgo principal
+## What is fragmentation and why does it matter?
 
-El 10 de abril de 2025, el **Regimiento N°6 Chacabuco** emitió **144 órdenes de compra idénticas** en un solo día a **CONSTRUCTORA Y COMERCIALIZADORA MOSIL LIMITADA**:
+When the State needs to purchase goods or services, the law establishes that **if the amount exceeds 1,000 UTM (~$66M CLP), it must go through a public tender** — where multiple suppliers compete and the State selects the best offer. This ensures transparency and the efficient use of public funds.
+
+**Agile Purchase** (*Compra Ágil*) is an exception mechanism: it allows for quick purchases without a tender, but only if the individual order does not exceed 100 UTM (~$6.6M CLP).
+
+**Fragmentation** occurs when an organization deliberately splits a large purchase into many small orders to stay below the threshold and bypass the public tender process. This is **illegal** according to DS 250 art. 13 and DS 661 art. 16, and can result in fines ranging from 10 to 100 UTM, in addition to administrative liability.
+
+```
+Public Tender (What should happen)           Fragmentation (What we detect)
+─────────────────────────────────────────    ──────────────────────────────────────
+  $702M Hardware purchase                     Order 001: $4.87M  ← below limit
+         ↓                                    Order 002: $4.87M  ← below limit
+  Public call for proposals                   Order 003: $4.87M  ← below limit
+         ↓                                    ...
+  Multiple suppliers compete                  Order 144: $4.87M  ← below limit
+         ↓                                               ↓
+  Best offer is selected                      Total: $702M → should have been tendered
+```
+
+---
+
+## Main Finding
+
+On April 10, 2025, the **6th Regiment "Chacabuco"** issued **144 identical purchase orders** in a single day to **CONSTRUCTORA Y COMERCIALIZADORA MOSIL LIMITADA**:
 
 | | |
 |---|---|
-| Monto por orden | $4,876,550 CLP — exactamente igual en las 144 |
-| Total acumulado | **$702,223,200 CLP** |
-| Supera el umbral de licitación | **10.6 veces** |
-| Cotización de origen | `3365-52-COT25` — una sola invitación dividida en 144 ítems |
-| Descripción | Adquisición de elementos de ferretería |
-| Porcentaje del límite AG elegido | 73.9% — deliberadamente bajo el umbral de control |
+| Amount per order | $4,876,550 CLP — exactly the same for all 144 |
+| Accumulated total | **$702,223,200 CLP** |
+| Tender threshold excess | **10.6 times** |
+| Source quote | `3365-52-COT25` — a single invitation split into 144 items |
+| Description | Acquisition of hardware elements |
+| % of selected limit | 73.9% — deliberately below the control threshold |
 
-Las 144 órdenes tienen el mismo monto exacto al peso, la misma fecha, la misma cotización de origen y la misma descripción. No es un error administrativo.
+The 144 orders share the exact same amount, date, source quote, and description. This is not an administrative oversight.
 
-### Escala del problema
+### Scale of the Problem
 
-| Métrica | Valor |
+| Metric | Value |
 |---------|-------|
-| Casos de fraccionamiento detectados | **2,214** |
-| Monto total expuesto | **$291.7 B CLP** |
-| Sectores afectados | Salud, Educación, Ejército, Carabineros, Municipios |
-| Par más crónico | Hospital Clínico U. de Chile → proveedor individual, **7 meses del año**, $1.01B CLP |
+| Detected fragmentation cases | **2,214** |
+| Total exposed amount | **$291.7 B CLP** |
+| Affected sectors | Health, Education, Army, Police, Municipalities |
+| Most chronic pair | U. de Chile Clinical Hospital → single supplier, **7 months of the year**, $1.01B CLP |
 
 ---
 
-## Visualizaciones
+## Visualizations
 
-**Top 15 casos por monto total expuesto:**
+**Top 15 cases by total exposed amount:**
 
-![Top 15 casos de fraccionamiento](docs/img/g2_fraccionamiento_top15.png)
+![Top 15 fragmentation cases](docs/img/g2_fraccionamiento_top15.png)
 
-**Distribución de montos acumulados:**
+**Distribution of accumulated amounts:**
 
-![Distribución de montos](docs/img/g3_distribucion.png)
+![Amount distribution](docs/img/g3_distribucion.png)
 
-**Pares crónicos — organismos que fraccionan 6+ meses del año:**
+**Chronic pairs — organizations fragmenting 6+ months of the year:**
 
-![Fraccionamiento crónico](docs/img/g4_cronico.png)
+![Chronic fragmentation](docs/img/g4_cronico.png)
 
-**Caso Regimiento Chacabuco — MOSIL (144 órdenes idénticas):**
+**Chacabuco Regiment Case — MOSIL (144 identical orders):**
 
-![Caso Mosil](docs/img/g5_mosil.png)
+![Mosil Case](docs/img/g5_mosil.png)
 
-**Drilldown de órdenes individuales:**
+**Order drilldown visualization:**
 
-![Drilldown de caso](docs/img/g6_drilldown.png)
+![Case drilldown](docs/img/g6_drilldown.png)
 
 ---
 
-## Por qué grafos y no SQL
+## Why Graphs and not SQL
 
-Los datos de compras son inherentemente relacionales. SQL puede responder "¿cuánto gastó este organismo?" pero no "¿qué proveedores comparten los mismos hospitales de forma sistemática?" ni "¿cuáles son los nodos con mayor poder estructural en toda la red?"
+Purchasing data is inherently relational. SQL can answer "how much did this organization spend?" but not "which suppliers systematically share the same hospitals?" or "which nodes have the highest structural power in the entire network?"
 
 ```
-(UnidadCompra) ──EMITIO──> (OrdenCompra_Item) ──ADJUDICADA_A──> (Proveedor)
-                                   └──CLASIFICA_COMO──> (Producto)
+(PurchasingUnit) ──ISSUED──> (OrderLine_Item) ──AWARDED_TO──> (Supplier)
+                                   └──CLASSIFIED_AS──> (Product)
 
-1,976 organismos · 49,020 proveedores · 1,649,920 transacciones
+1,976 organizations · 49,020 suppliers · 1,649,920 transactions
 ```
 
-El grafo permite además ejecutar **PageRank** sobre la red — midiendo no solo quién vende más sino quién tiene poder estructural, independiente del volumen de ventas.
+The graph also allows running **PageRank** over the network — measuring not just who sells more, but who holds structural power, independent of sales volume.
 
 ---
 
 ## Stack
 
-| Componente | Tecnología |
+| Component | Technology |
 |-----------|-----------|
-| Fuente de datos | Mercado Público Chile (Azure Blob Storage) |
+| Data Source | Mercado Público Chile (Azure Blob Storage) |
 | ETL | Python · pandas |
-| Almacenamiento | Neo4j 5 (Property Graph) |
-| Algoritmos de grafos | Neo4j GDS (PageRank, proyecciones) |
-| Análisis y visualización | Python · pandas · matplotlib |
+| Storage | Neo4j 5 (Property Graph) |
+| Graph Algorithms | Neo4j GDS (PageRank, projections) |
+| Analysis & Visualization | Python · pandas · matplotlib |
 
 ### Pipeline
 
 ```
-00_download_bronze.py    descarga CSVs desde Mercado Público
-01_process_silver.py     limpieza y normalización
-02_bulk_ingestion.py     carga en Neo4j vía APOC batch
-03_create_projection.py  proyección GDS
-04_run_analytics.py      PageRank + detección de patrones
+00_download_bronze.py    download CSVs from Mercado Público
+01_process_silver.py     cleaning and normalization
+02_bulk_ingestion.py     load into Neo4j via APOC batch
+03_create_projection.py  GDS projection
+04_run_analytics.py      PageRank + pattern detection
 ```
 
 ---
 
-## Clasificación de casos
+## Case Classification
 
-Cada caso se evalúa en tres dimensiones independientes (1–3 puntos cada una):
+Each case is evaluated across three independent dimensions (1–3 points each):
 
-| Dimensión | 1 punto | 2 puntos | 3 puntos |
+| Dimension | 1 point | 2 points | 3 points |
 |-----------|---------|---------|---------|
-| **Evidencia forense** | Montos/descripciones variados | >80% en uno de los dos criterios | >80% en ambos o cotización única |
-| **Cronicidad** | 1–2 meses | 3–5 meses | 6+ meses del año |
-| **Escala** | <10x el umbral | 10–50x | >50x |
+| **Forensic Evidence** | Varied amounts/descriptions | >80% in one of the two criteria | >80% in both or single source quote |
+| **Chronicity** | 1–2 months | 3–5 months | 6+ months of the year |
+| **Scale** | <10x the threshold | 10–50x | >50x |
 
-`CRÍTICO` ≥7 pts · `ALTO` ≥6 · `MEDIO` ≥4 · `BAJO` <4
+`CRITICAL` ≥7 pts · `HIGH` ≥6 · `MEDIUM` ≥4 · `LOW` <4
 
-La cronicidad tiene peso propio: un organismo que fracciona el mismo contrato en 7 meses distintos no puede argumentar que no sabía que el total superaría el umbral de licitación. Esto sigue el criterio del dictamen CGR sobre la Municipalidad de La Cisterna.
+Chronicity is heavily weighted: an organization fragmenting the same contract over 7 different months cannot argue that the total amount was unpredictable. This follows the Comptroller General's (CGR) ruling for the Municipality of La Cisterna.
 
 ---
 
-## Instalación
+## Installation
 
-**Requisitos:** Python 3.11+, Neo4j 5 con APOC y GDS, Docker
+**Requirements:** Python 3.11+, Neo4j 5 with APOC and GDS, Docker
 
 ```bash
 git clone https://github.com/daraletdev/Argos-Chile
 cd Argos-Chile
 uv sync
-cp .env.example .env          # configurar NEO4J_ROOT_PASSWORD
+cp .env.example .env          # configure NEO4J_ROOT_PASSWORD
 docker compose up -d
 uv run python scripts/00_download_bronze.py
 uv run python scripts/01_process_silver.py
@@ -151,20 +153,20 @@ cd notebooks && jupyter lab
 
 ---
 
-## Marco legal
+## Legal Framework
 
-- DS 250 art. 13 — define y prohíbe la fragmentación
-- DS 661 art. 16 (diciembre 2024) — nuevo reglamento, refuerza la prohibición
-- Dictamen CGR, Municipalidad de La Cisterna — precedente sobre imprevisibilidad del monto
-- Navarrete Millón, M. (2024). *Fragmentación en compras públicas*. ISBN 978-956-405-179-6
-- Sanciones: 10 a 100 UTM + responsabilidad administrativa
-
----
-
-## Advertencia metodológica
-
-Los hallazgos son indicios estadísticos basados en patrones objetivos de datos públicos. No constituyen prueba de fraude ni determinación legal. Cada caso requiere verificación documental independiente.
+- DS 250 art. 13 — defines and prohibits fragmentation.
+- DS 661 art. 16 (December 2024) — new regulation, reinforcing the prohibition.
+- CGR Ruling, Municipality of La Cisterna — precedent on amount unpredictability.
+- Navarrete Millón, M. (2024). *Fragmentación en compras públicas*. ISBN 978-956-405-179-6.
+- Sanctions: 10 to 100 UTM + administrative liability.
 
 ---
 
-*Datos: Mercado Público Chile 2025 · Licencia: MIT*
+## Methodological Warning
+
+The findings are statistical indications based on objective patterns in public data. They do not constitute proof of fraud or a legal determination. Each case requires independent documentary verification.
+
+---
+
+*Data: Mercado Público Chile 2025 · License: MIT*
