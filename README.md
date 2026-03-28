@@ -136,8 +136,8 @@ La cronicidad tiene peso propio: un organismo que fracciona el mismo contrato en
 **Requisitos:** Python 3.11+, Neo4j 5 con APOC y GDS, Docker
 
 ```bash
-git clone https://github.com/daraletdev/WatchTower-Chile
-cd WatchTower-Chile
+git clone https://github.com/daraletdev/Argos-Chile
+cd Argos-Chile
 uv sync
 cp .env.example .env          # configurar NEO4J_ROOT_PASSWORD
 docker compose up -d
