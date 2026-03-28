@@ -129,6 +129,9 @@ Cada caso se evalúa en tres dimensiones independientes (1–3 puntos cada una):
 
 La cronicidad tiene peso propio: un organismo que fracciona el mismo contrato en 7 meses distintos no puede argumentar que no sabía que el total superaría el umbral de licitación. Esto sigue el criterio del dictamen CGR sobre la Municipalidad de La Cisterna.
 
+### [Metodología Completa](docs/METHODOLOGY_ES.md)
+Documentación técnica detallada sobre limpieza de datos, modelado de grafos e indicadores de puntuación forense.
+
 ---
 
 ## Instalación

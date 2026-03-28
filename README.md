@@ -131,6 +131,9 @@ Each case is evaluated across three independent dimensions (1–3 points each):
 
 Chronicity is heavily weighted: an organization fragmenting the same contract over 7 different months cannot argue that the total amount was unpredictable. This follows the Comptroller General's (CGR) ruling for the Municipality of La Cisterna.
 
+### [Full Methodology](docs/METHODOLOGY.md)
+Detailed technical documentation on data cleaning, graph modeling, and forensic scoring indicators.
+
 ---
 
 ## Installation
